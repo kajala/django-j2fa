@@ -1,0 +1,4 @@
+include *.txt *.md
+recursive-include j2fa *
+prune project
+prune j2fa_test

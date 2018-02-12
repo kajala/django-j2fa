@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles i18n %}
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>{% trans '2-Factor Authentication' %}</title>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    {% block head_end %}{% endblock %}
+</head>
+<body>
+
+{% block body %}
+
+<div style="font-family: Courier">
+
+    <h1 style="font-size: 1.5em;">{% trans '2-Factor Authentication' %}</h1>
+
+    {% if error %}
+    <div style="color: red; margin-bottom: 1em;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form style="font-family: Courier;" action="" method="post" role="form">{% csrf_token %}
+        {{ form }}
+        <button class="btn btn-lg btn-success btn-block" type="submit" value="login">{% trans 'Continue' %}</button>
+        <input type="hidden" name="next" value="{{ next }}"/>
+    </form>
+
+    <p style="padding-top: 1em;">
+        <a href="{% url 'admin:logout' %}">{% trans 'Logout' %}</a>
+    </p>
+
+</div>
+
+{% endblock %}
+
+{% block body_end %}{% endblock %}
+
+</body>
+</html>

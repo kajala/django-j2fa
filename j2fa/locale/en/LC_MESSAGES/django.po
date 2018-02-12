@@ -1,0 +1,75 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-12-12 10:37+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: j2fa/apps.py:7 j2fa/templates/j2fa/ask-code.html:12
+#: j2fa/templates/j2fa/ask-code.html:29 j2fa/templates/j2fa/ask-code2.html:12
+#: j2fa/templates/j2fa/ask-code2.html:37
+msgid "2-Factor Authentication"
+msgstr ""
+
+#: j2fa/forms.py:6
+msgid "two.factor.code.label"
+msgstr ""
+
+#: j2fa/jutil/validators.py:36
+msgid "Invalid phone number"
+msgstr ""
+
+#: j2fa/jutil/validators.py:46
+msgid "Invalid passport number"
+msgstr ""
+
+#: j2fa/jutil/validators.py:73 j2fa/jutil/validators.py:75
+#: j2fa/jutil/validators.py:84
+msgid "Invalid IBAN account number"
+msgstr ""
+
+#: j2fa/jutil/validators.py:135 j2fa/jutil/validators.py:137
+#: j2fa/jutil/validators.py:144 j2fa/jutil/validators.py:147
+msgid "Invalid company registration ID"
+msgstr ""
+
+#: j2fa/jutil/validators.py:153 j2fa/jutil/validators.py:164
+#: j2fa/jutil/validators.py:183 j2fa/jutil/validators.py:202
+msgid "Invalid personal identification number"
+msgstr ""
+
+#: j2fa/templates/j2fa/ask-code.html:39 j2fa/templates/j2fa/ask-code2.html:62
+msgid "Continue"
+msgstr ""
+
+#: j2fa/templates/j2fa/ask-code.html:44 j2fa/templates/j2fa/ask-code2.html:66
+msgid "Logout"
+msgstr ""
+
+#: j2fa/templates/j2fa/ask-code2.html:56
+msgid "Code"
+msgstr ""
+
+#: j2fa/views.py:83 j2fa/views.py:113
+msgid "Too many attempts in 24h"
+msgstr ""
+
+#: j2fa/views.py:86
+msgid "your.phone.number.missing.from.system"
+msgstr ""
+
+#: j2fa/views.py:120
+msgid "Invalid code, sending new one"
+msgstr ""
