@@ -1,5 +1,5 @@
-Django>=2.0
-psycopg2-binary>=2.7.4
-django-ipware>=1.1.6
-requests>=2.18.4
-setuptools>=36.6.0
+Django>=2.1
+psycopg2-binary>=2.7.5
+django-ipware>=2.1.0
+requests>=2.19.1
+setuptools>=40.0.0
