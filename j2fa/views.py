@@ -12,7 +12,7 @@ from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.timezone import now
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from j2fa.jutil.sms import send_sms
 from j2fa.jutil.validators import phone_filter

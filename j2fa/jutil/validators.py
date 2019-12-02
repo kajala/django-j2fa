@@ -1,7 +1,7 @@
 from decimal import Decimal
 import re
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 
 EMAIL_FILTER = re.compile(r'[^a-z0-9.@-]')
