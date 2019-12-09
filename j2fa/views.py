@@ -1,7 +1,8 @@
+#pylint: disable=logging-format-interpolation
 import logging
 from datetime import timedelta
 from django.conf import settings
-from ipware.ip import get_ip, get_real_ip
+from ipware.ip import get_real_ip
 from j2fa.errors import TwoFactorAuthError
 from j2fa.forms import TwoFactorForm
 from j2fa.models import TwoFactorSession
@@ -68,7 +69,7 @@ class TwoFactorAuth(TemplateView):
 
         return render(request, self.template_name, cx)
 
-    def get_session(self, request: HttpRequest, reset: bool=False) -> TwoFactorSession:
+    def get_session(self, request: HttpRequest, reset: bool = False) -> TwoFactorSession:
         user, ip, user_agent, phone = self.get_session_const(request)
         ses_id = request.session.get('j2fa_session')
         ses = TwoFactorSession.objects.filter(id=ses_id).first() if ses_id else None

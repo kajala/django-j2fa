@@ -1,12 +1,13 @@
+#pylint: disable=logging-format-interpolation
 import logging
 from datetime import timedelta
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
 from j2fa.helpers import j2fa_make_code, j2fa_send_sms
+
 
 logger = logging.getLogger(__name__)
 

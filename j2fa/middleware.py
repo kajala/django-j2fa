@@ -1,6 +1,7 @@
+#pylint: disable=logging-format-interpolation
 import logging
 from django.conf import settings
-from ipware.ip import get_ip, get_real_ip
+from ipware.ip import get_real_ip
 from j2fa.models import TwoFactorSession
 from django.contrib.auth.models import User
 from django.contrib.sessions.backends.base import SessionBase
@@ -18,12 +19,11 @@ J2FA_EXCLUDED_ROUTES = [
 logger = logging.getLogger(__name__)
 
 
-class Ensure2FactorAuthenticatedMiddleware(object):
+class Ensure2FactorAuthenticatedMiddleware:
     """
     Ensures that User is 2-factor authenticated.
     Place after session init.
     """
-
     def __init__(self, get_response=None):
         self.get_response = get_response
 

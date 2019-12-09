@@ -10,8 +10,10 @@ J2FA_PHONE_FILTER = re.compile(r'[^+0-9]')
 def j2fa_make_code():
     charset = '123456789'
     code = ''
+    #pylint: disable=unused-variable
     for i in range(randint(4, 6)):
         code += choice(charset)
+    #pylint: enable=unused-variable
     return code
 
 
@@ -19,7 +21,7 @@ def j2fa_phone_filter(v: str) -> str:
     return J2FA_PHONE_FILTER.sub('', v)
 
 
-def j2fa_send_sms(phone: str, message: str, sender: str= '', **kw):
+def j2fa_send_sms(phone: str, message: str, sender: str = '', **kw):
     """
     Sends SMS via Kajala Group SMS API. Contact info@kajala.com for access.
     :param phone: Phone number
