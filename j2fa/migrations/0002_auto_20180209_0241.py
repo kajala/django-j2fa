@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='twofactorsession',
             name='code',
-            field=models.CharField(blank=True, default=j2fa.helpers.make_code, max_length=8),
+            field=models.CharField(blank=True, default=j2fa.helpers.j2fa_make_code, max_length=8),
         ),
     ]

@@ -5,7 +5,7 @@ from ipware.ip import get_ip, get_real_ip
 from j2fa.errors import TwoFactorAuthError
 from j2fa.forms import TwoFactorForm
 from j2fa.models import TwoFactorSession
-from j2fa.helpers import make_code
+from j2fa.helpers import j2fa_make_code, j2fa_phone_filter
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
@@ -14,8 +14,6 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
-from j2fa.jutil.sms import send_sms
-from j2fa.jutil.validators import phone_filter
 
 
 logger = logging.getLogger(__name__)
@@ -80,7 +78,7 @@ class TwoFactorAuth(TemplateView):
             if TwoFactorSession.objects.count_failed_attempts(user, ip, since) > MAX_FAILED_ATTEMPTS_24H:
                 raise TwoFactorAuthError(_('Too many attempts in 24h'))
 
-            ses = TwoFactorSession.objects.create(user=user, ip=ip, user_agent=user_agent, phone=phone, code=make_code())
+            ses = TwoFactorSession.objects.create(user=user, ip=ip, user_agent=user_agent, phone=phone, code=j2fa_make_code())
             request.session['j2fa_session'] = ses.id
         return ses
 
@@ -91,7 +89,7 @@ class TwoFactorAuth(TemplateView):
         if ip is None and settings.DEBUG:
             ip = '127.0.0.1'
         user_agent = request.META['HTTP_USER_AGENT']
-        phone = phone_filter(self.get_user_phone(user))
+        phone = j2fa_phone_filter(self.get_user_phone(user))
         if not phone:
             raise TwoFactorAuthError(_('your.phone.number.missing.from.system'))
         return user, ip, user_agent, phone

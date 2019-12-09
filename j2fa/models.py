@@ -6,9 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
-from j2fa.helpers import make_code
-from j2fa.jutil.sms import send_sms
-
+from j2fa.helpers import j2fa_make_code, j2fa_send_sms
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +36,7 @@ class TwoFactorSession(models.Model):
     user_agent = models.CharField(max_length=512)
     ip = models.GenericIPAddressField(db_index=True)
     phone = models.CharField(max_length=32, db_index=True)
-    code = models.CharField(max_length=8, default=make_code, blank=True)
+    code = models.CharField(max_length=8, default=j2fa_make_code, blank=True)
     active = models.BooleanField(default=False, db_index=True, blank=True)
     archived = models.BooleanField(default=False, db_index=True, blank=True)
 
@@ -53,4 +51,4 @@ class TwoFactorSession(models.Model):
     def send_code(self):
         logger.info('2FA_SEND_CODE: {} / {} / {}'.format(self.user, self.phone, self.code))
         if settings.SMS_TOKEN:
-            send_sms(self.phone, self.code)
+            j2fa_send_sms(self.phone, self.code)
