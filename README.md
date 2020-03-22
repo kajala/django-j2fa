@@ -1,7 +1,7 @@
 django-j2fa
 ===========
 
-2-factor SMS authentication for Django projects.
+2-factor SMS authentication for Django projects. Supports Django 3.0.
 
 Install
 =======

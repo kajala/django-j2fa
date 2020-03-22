@@ -17,9 +17,9 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
 
-logger = logging.getLogger(__name__)
+DEFAULT_MAX_FAILED_ATTEMPTS_24H = 5  # can be overriden with settings.MAX_FAILED_ATTEMPTS_24H
 
-MAX_FAILED_ATTEMPTS_24H = 5
+logger = logging.getLogger(__name__)
 
 
 class TwoFactorAuth(TemplateView):
@@ -76,7 +76,12 @@ class TwoFactorAuth(TemplateView):
         assert ses is None or isinstance(ses, TwoFactorSession)
         if not ses or not ses.is_valid(user, ip, user_agent) or reset:
             since = now() - timedelta(hours=24)
-            if TwoFactorSession.objects.count_failed_attempts(user, ip, since) > MAX_FAILED_ATTEMPTS_24H:
+            if hasattr(settings, 'MAX_FAILED_ATTEMPTS_24H'):
+                max_failed_attempts_24h = settings.MAX_FAILED_ATTEMPTS_24H
+            else:
+                max_failed_attempts_24h = DEFAULT_MAX_FAILED_ATTEMPTS_24H
+
+            if TwoFactorSession.objects.count_failed_attempts(user, ip, since) > max_failed_attempts_24h:
                 raise TwoFactorAuthError(_('Too many attempts in 24h'))
 
             ses = TwoFactorSession.objects.create(user=user, ip=ip, user_agent=user_agent, phone=phone, code=j2fa_make_code())
@@ -95,7 +100,7 @@ class TwoFactorAuth(TemplateView):
             raise TwoFactorAuthError(_('your.phone.number.missing.from.system'))
         return user, ip, user_agent, phone
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         cx = self.get_context_data()
         form = cx['form']
         assert isinstance(form, TwoFactorForm)
