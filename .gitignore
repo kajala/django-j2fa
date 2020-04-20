@@ -15,4 +15,5 @@ settings.py
 /downloads
 /static
 /*.log
+/.pytype
 

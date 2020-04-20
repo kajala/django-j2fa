@@ -1,8 +1,7 @@
-#pylint: disable=logging-format-interpolation
 import logging
 from datetime import timedelta
 from django.conf import settings
-from ipware.ip import get_real_ip
+from ipware.ip import get_real_ip  # pytype: disable=import-error
 from j2fa.errors import TwoFactorAuthError
 from j2fa.forms import TwoFactorForm
 from j2fa.models import TwoFactorSession
@@ -64,7 +63,7 @@ class TwoFactorAuth(TemplateView):
         try:
             self.get_session(request).send_code()
         except ValidationError as e:
-            logger.info('2FA_WARNING: {} / {}'.format(user, e))
+            logger.info('2FA_WARNING: %s / %s', user, e)
             cx['error'] = ' '.join(e.messages)
 
         return render(request, self.template_name, cx)
@@ -111,12 +110,12 @@ class TwoFactorAuth(TemplateView):
                 assert isinstance(ses, TwoFactorSession)
                 code = form.cleaned_data['code']
                 user, ip, user_agent, phone = self.get_session_const(request)
-                logger.info('2FA_POST_CODE: {} {} {} "{}" vs {}'.format(user, ip, user_agent, phone, ses.code))
+                logger.info('2FA_POST_CODE: %s %s %s "%s" vs %s', user, ip, user_agent, phone, ses.code)
                 if ses.code != code:
                     self.get_session(request, reset=True).send_code()
                     raise TwoFactorAuthError(_('Invalid code, sending new one'))
 
-                logger.info('2FA_PASS: {} / {}'.format(user, ses))
+                logger.info('2FA_PASS: %s / %s', user, ses)
                 TwoFactorSession.objects.archive_old_sessions(user, ses)
 
                 return redirect(cx.get('next'))

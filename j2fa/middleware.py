@@ -1,7 +1,7 @@
 #pylint: disable=logging-format-interpolation
 import logging
 from django.conf import settings
-from ipware.ip import get_real_ip
+from ipware.ip import get_real_ip  # pytype: disable=import-error
 from j2fa.models import TwoFactorSession
 from django.contrib.auth.models import User
 from django.contrib.sessions.backends.base import SessionBase
