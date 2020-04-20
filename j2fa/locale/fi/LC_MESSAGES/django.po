@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-12 10:37+0000\n"
+"POT-Creation-Date: 2020-04-20 22:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,32 +24,9 @@ msgstr ""
 msgid "2-Factor Authentication"
 msgstr "SMS-varmenne"
 
-#: j2fa/forms.py:6
+#: j2fa/forms.py:6 j2fa/templates/j2fa/ask-code2.html:56
 msgid "two.factor.code.label"
 msgstr "Koodi"
-
-#: j2fa/jutil/validators.py:36
-msgid "Invalid phone number"
-msgstr ""
-
-#: j2fa/jutil/validators.py:46
-msgid "Invalid passport number"
-msgstr ""
-
-#: j2fa/jutil/validators.py:73 j2fa/jutil/validators.py:75
-#: j2fa/jutil/validators.py:84
-msgid "Invalid IBAN account number"
-msgstr ""
-
-#: j2fa/jutil/validators.py:135 j2fa/jutil/validators.py:137
-#: j2fa/jutil/validators.py:144 j2fa/jutil/validators.py:147
-msgid "Invalid company registration ID"
-msgstr ""
-
-#: j2fa/jutil/validators.py:153 j2fa/jutil/validators.py:164
-#: j2fa/jutil/validators.py:183 j2fa/jutil/validators.py:202
-msgid "Invalid personal identification number"
-msgstr ""
 
 #: j2fa/templates/j2fa/ask-code.html:39 j2fa/templates/j2fa/ask-code2.html:62
 msgid "Continue"
@@ -59,19 +36,15 @@ msgstr "Jatka"
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
-#: j2fa/templates/j2fa/ask-code2.html:56
-msgid "Code"
-msgstr ""
-
-#: j2fa/views.py:83 j2fa/views.py:113
+#: j2fa/views.py:84
 msgid "Too many attempts in 24h"
 msgstr "Liian monta yritystä, odota 24h"
 
-#: j2fa/views.py:86
+#: j2fa/views.py:99
 msgid "your.phone.number.missing.from.system"
 msgstr "Puhelinnumerosi puuttuu järjestelmästä, ota yhteyttä tekniseen tukeen."
 
-#: j2fa/views.py:120
+#: j2fa/views.py:116
 msgid "Invalid code, sending new one"
 msgstr "Epäkelpo koodi. Saat pian uuden koodin puhelimeesi."
 
