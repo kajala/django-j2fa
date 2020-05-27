@@ -3,6 +3,7 @@ django-j2fa
 
 2-factor SMS authentication for Django projects. Supports Django 3.0.
 
+
 Install
 =======
 
@@ -11,3 +12,17 @@ Install
 3. Make sure user.profile.phone resolves to phone number and user.profile.require_2fa resolves to True/False
 4. Set project settings SMS_TOKEN and SMS_SENDER_NAME
 5. Add TwoFactorAuth.as_view() to urls with name='j2fa-obtain-auth'
+
+
+Static Code Analysis
+====================
+
+The library passes both prospector and mypy checking. To install:
+
+pip install prospector
+pip install mypy
+
+To analyze:
+
+prospector
+mypy .
