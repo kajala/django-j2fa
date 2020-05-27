@@ -143,5 +143,5 @@ LOGGING = {
 
 # SMS API
 
-SMS_TOKEN = None
+SMS_TOKEN = ''
 SMS_SENDER_NAME = 'Test'

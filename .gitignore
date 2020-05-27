@@ -16,4 +16,5 @@ settings.py
 /static
 /*.log
 /.pytype
+/.mypy_cache
 

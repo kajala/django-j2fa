@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
 from django.conf import settings
-from ipware.ip import get_real_ip  # pytype: disable=import-error
+from ipware.ip import get_real_ip  # type: ignore  # pytype: disable=import-error
 from j2fa.errors import TwoFactorAuthError
 from j2fa.forms import TwoFactorForm
 from j2fa.models import TwoFactorSession
@@ -28,8 +28,8 @@ class TwoFactorAuth(TemplateView):
 
     def get_user_phone(self, user: User):
         assert user
-        assert user.profile
-        return user.profile.phone
+        assert user.profile  # type: ignore
+        return user.profile.phone  # type: ignore
 
     def get_context_data(self, **kw):
         request = self.request
@@ -76,7 +76,7 @@ class TwoFactorAuth(TemplateView):
         if not ses or not ses.is_valid(user, ip, user_agent) or reset:
             since = now() - timedelta(hours=24)
             if hasattr(settings, 'MAX_FAILED_ATTEMPTS_24H'):
-                max_failed_attempts_24h = settings.MAX_FAILED_ATTEMPTS_24H
+                max_failed_attempts_24h = settings.MAX_FAILED_ATTEMPTS_24H  # type: ignore
             else:
                 max_failed_attempts_24h = DEFAULT_MAX_FAILED_ATTEMPTS_24H
 

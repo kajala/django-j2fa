@@ -1,3 +1,4 @@
+import logging
 import re
 from random import randint, choice
 import requests
@@ -6,14 +7,14 @@ from django.conf import settings
 
 J2FA_PHONE_FILTER = re.compile(r'[^+0-9]')
 
+logger = logging.getLogger(__name__)
+
 
 def j2fa_make_code():
     charset = '123456789'
     code = ''
-    #pylint: disable=unused-variable
-    for i in range(randint(4, 6)):
+    for i in range(randint(4, 6)):  # pylint: disable=unused-variable
         code += choice(charset)
-    #pylint: enable=unused-variable
     return code
 
 
@@ -30,7 +31,7 @@ def j2fa_send_sms(phone: str, message: str, sender: str = '', **kw):
     :param kw: Variable key-value pairs to be sent to SMS API
     :return: Response from requests.post
     """
-    if not hasattr(settings, 'SMS_TOKEN'):
+    if not hasattr(settings, 'SMS_TOKEN') or not settings.SMS_TOKEN:
         raise Exception('Invalid configuration: settings.SMS_TOKEN missing')
     if not sender:
         sender = settings.SMS_SENDER_NAME
@@ -47,4 +48,5 @@ def j2fa_send_sms(phone: str, message: str, sender: str = '', **kw):
     }
     for k, v in kw.items():
         data[k] = v
-    return requests.post("https://sms.kajala.com/api/sms/", json=data, headers=headers)
+    res = requests.post("https://sms.kajala.com/api/sms/", json=data, headers=headers)
+    logger.info('HTTP POST https://sms.kajala.com/api/sms/ status %s', res.status_code)

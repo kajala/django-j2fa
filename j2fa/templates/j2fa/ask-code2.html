@@ -41,9 +41,12 @@
                     <form action="" method="post" role="form">
                         {% csrf_token %}
                         <fieldset>
-                            {% if form.non_field_errors or form.code.errors %}
+                            {% if form.non_field_errors or form.code.errors or error %}
                                 <div class="alert alert-danger">
                                     <!--<a class="close" data-dismiss="alert">&times;</a>-->
+                                    {% if error %}
+                                        <p class="form-error">{{ error }}</p>
+                                    {% endif %}
                                     {% for err in form.non_field_errors %}
                                         <p class="form-error">{{ err }}</p>
                                     {% endfor %}

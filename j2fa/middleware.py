@@ -1,7 +1,6 @@
-#pylint: disable=logging-format-interpolation
 import logging
 from django.conf import settings
-from ipware.ip import get_real_ip  # pytype: disable=import-error
+from ipware.ip import get_real_ip  # type: ignore  # pytype: disable=import-error
 from j2fa.models import TwoFactorSession
 from django.contrib.auth.models import User
 from django.contrib.sessions.backends.base import SessionBase
@@ -10,7 +9,7 @@ from django.shortcuts import redirect
 from django.urls import resolve, reverse
 
 
-# these can be overriden in settings.py by defining variable J2FA_EXCLUDED_ROUTES
+# These can be overridden in settings.py by defining variable J2FA_EXCLUDED_ROUTES
 J2FA_EXCLUDED_ROUTES = [
     'j2fa-obtain-auth',
     'logout',
@@ -27,8 +26,8 @@ class Ensure2FactorAuthenticatedMiddleware:
     def __init__(self, get_response=None):
         self.get_response = get_response
 
-    def is_2fa_required(self, user: User):
-        return user.is_authenticated and hasattr(user, 'profile') and user.profile.require_2fa
+    def is_2fa_required(self, user: User) -> bool:
+        return user.is_authenticated and hasattr(user, 'profile') and user.profile.require_2fa  # type: ignore
 
     def __call__(self, request: HttpRequest):
         user = request.user
@@ -52,7 +51,7 @@ class Ensure2FactorAuthenticatedMiddleware:
                 j2fa_session = TwoFactorSession.objects.filter(id=j2fa_session_id).first()
                 assert j2fa_session is None or isinstance(j2fa_session, TwoFactorSession)
                 if not j2fa_session or not j2fa_session.is_valid(user, ip, user_agent) or not j2fa_session.active:
-                    logger.info('J2FA_REQUIRE_AUTH: route={}, j2fa_session_id={}'.format(route_name, j2fa_session_id))
+                    logger.info('J2FA_REQUIRE_AUTH: route=%s, j2fa_session_id=%s', route_name, j2fa_session_id)
                     return redirect(reverse('j2fa-obtain-auth'))
 
         # get response
