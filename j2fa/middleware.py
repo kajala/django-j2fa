@@ -1,6 +1,6 @@
 import logging
 from django.conf import settings
-from ipware.ip import get_real_ip  # type: ignore  # pytype: disable=import-error
+from ipware.ip import get_client_ip  # type: ignore  # pytype: disable=import-error
 from j2fa.models import TwoFactorSession
 from django.contrib.auth.models import User
 from django.contrib.sessions.backends.base import SessionBase
@@ -35,7 +35,7 @@ class Ensure2FactorAuthenticatedMiddleware:
             session = request.session
             assert isinstance(session, SessionBase)
             user_agent = request.META.get('HTTP_USER_AGENT', '')
-            ip = get_real_ip(request)
+            ip = get_client_ip(request)[0]
             if ip is None and settings.DEBUG:
                 ip = '127.0.0.1'
 
