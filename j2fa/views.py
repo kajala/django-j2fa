@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
 from django.conf import settings
-from ipware.ip import get_real_ip  # type: ignore  # pytype: disable=import-error
+from ipware.ip import get_client_ip  # type: ignore  # pytype: disable=import-error
 from j2fa.errors import TwoFactorAuthError
 from j2fa.forms import TwoFactorForm
 from j2fa.models import TwoFactorSession
@@ -90,7 +90,7 @@ class TwoFactorAuth(TemplateView):
     def get_session_const(self, request: HttpRequest):
         user = request.user
         assert isinstance(user, User)
-        ip = get_real_ip(request)
+        ip = get_client_ip(request)[0]
         if ip is None and settings.DEBUG:
             ip = '127.0.0.1'
         user_agent = request.META['HTTP_USER_AGENT']
