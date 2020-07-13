@@ -27,7 +27,14 @@ class Ensure2FactorAuthenticatedMiddleware:
         self.get_response = get_response
 
     def is_2fa_required(self, user: User) -> bool:
-        return user.is_authenticated and hasattr(user, 'profile') and user.profile.require_2fa  # type: ignore
+        """
+        Checks User.profile.require_2fa boolean.
+        You can override this if custom toggle location is needed.
+        :param user: User
+        :return: bool
+        """
+        return user.is_authenticated and hasattr(user, 'profile') and \
+               hasattr(user.profile, 'require_j2fa') and user.profile.require_2fa  # type: ignore
 
     def __call__(self, request: HttpRequest):
         user = request.user
