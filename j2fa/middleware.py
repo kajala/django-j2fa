@@ -34,7 +34,7 @@ class Ensure2FactorAuthenticatedMiddleware:
         :return: bool
         """
         return user.is_authenticated and hasattr(user, 'profile') and \
-               hasattr(user.profile, 'require_j2fa') and user.profile.require_2fa  # type: ignore
+               hasattr(user.profile, 'require_2fa') and user.profile.require_2fa  # type: ignore
 
     def __call__(self, request: HttpRequest):
         user = request.user
