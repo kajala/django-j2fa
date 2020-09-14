@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 22:51+0000\n"
+"POT-Creation-Date: 2020-09-14 17:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,21 +17,21 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: j2fa/apps.py:7 j2fa/templates/j2fa/ask-code.html:12
-#: j2fa/templates/j2fa/ask-code.html:29 j2fa/templates/j2fa/ask-code2.html:12
+#: j2fa/apps.py:7 j2fa/templates/j2fa/ask-code1.html:12
+#: j2fa/templates/j2fa/ask-code1.html:29 j2fa/templates/j2fa/ask-code2.html:12
 #: j2fa/templates/j2fa/ask-code2.html:37
 msgid "2-Factor Authentication"
 msgstr ""
 
-#: j2fa/forms.py:6 j2fa/templates/j2fa/ask-code2.html:56
+#: j2fa/forms.py:6 j2fa/templates/j2fa/ask-code2.html:59
 msgid "two.factor.code.label"
-msgstr ""
+msgstr "Code you received by SMS"
 
-#: j2fa/templates/j2fa/ask-code.html:39 j2fa/templates/j2fa/ask-code2.html:62
+#: j2fa/templates/j2fa/ask-code1.html:39 j2fa/templates/j2fa/ask-code2.html:65
 msgid "Continue"
 msgstr ""
 
-#: j2fa/templates/j2fa/ask-code.html:44 j2fa/templates/j2fa/ask-code2.html:66
+#: j2fa/templates/j2fa/ask-code1.html:44 j2fa/templates/j2fa/ask-code2.html:69
 msgid "Logout"
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr ""
 
 #: j2fa/views.py:99
 msgid "your.phone.number.missing.from.system"
-msgstr ""
+msgstr "Your phone number is missing from the system"
 
 #: j2fa/views.py:116
 msgid "Invalid code, sending new one"
