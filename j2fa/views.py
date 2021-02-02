@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 class TwoFactorAuth(TemplateView):
-    template_name = 'j2fa/ask-code2.html'
-    logout_view_name = 'admin:logout'
-    default_next_view_name = 'admin:index'
+    template_name = "j2fa/ask-code2.html"
+    logout_view_name = "admin:logout"
+    default_next_view_name = "admin:index"
 
     def get_user_phone(self, user: User):
         assert user
@@ -35,17 +35,17 @@ class TwoFactorAuth(TemplateView):
         request = self.request
         assert isinstance(request, HttpRequest)
 
-        next_url = request.POST.get('next') if request.POST else None
+        next_url = request.POST.get("next") if request.POST else None
         if not next_url:
-            next_url = request.GET.get('next')
+            next_url = request.GET.get("next")
         if not next_url:
-            next_url = request.META.get('HTTP_REFERER')
+            next_url = request.META.get("HTTP_REFERER")
         if not next_url:
             next_url = reverse(self.default_next_view_name)
 
         cx = {
-            'form': TwoFactorForm(data=request.POST or None),
-            'next': next_url,
+            "form": TwoFactorForm(data=request.POST or None),
+            "next": next_url,
         }
         for k, v in kw.items():
             if v:
@@ -63,28 +63,30 @@ class TwoFactorAuth(TemplateView):
         try:
             self.get_session(request).send_code()
         except ValidationError as e:
-            logger.info('2FA_WARNING: %s / %s', user, e)
-            cx['error'] = ' '.join(e.messages)
+            logger.info("2FA_WARNING: %s / %s", user, e)
+            cx["error"] = " ".join(e.messages)
 
         return render(request, self.template_name, cx)
 
     def get_session(self, request: HttpRequest, reset: bool = False) -> TwoFactorSession:
         user, ip, user_agent, phone = self.get_session_const(request)
-        ses_id = request.session.get('j2fa_session')
+        ses_id = request.session.get("j2fa_session")
         ses = TwoFactorSession.objects.filter(id=ses_id).first() if ses_id else None
         assert ses is None or isinstance(ses, TwoFactorSession)
         if not ses or not ses.is_valid(user, ip, user_agent) or reset:
             since = now() - timedelta(hours=24)
-            if hasattr(settings, 'MAX_FAILED_ATTEMPTS_24H'):
+            if hasattr(settings, "MAX_FAILED_ATTEMPTS_24H"):
                 max_failed_attempts_24h = settings.MAX_FAILED_ATTEMPTS_24H  # type: ignore
             else:
                 max_failed_attempts_24h = DEFAULT_MAX_FAILED_ATTEMPTS_24H
 
             if TwoFactorSession.objects.count_failed_attempts(user, ip, since) > max_failed_attempts_24h:
-                raise TwoFactorAuthError(_('Too many attempts in 24h'))
+                raise TwoFactorAuthError(_("Too many attempts in 24h"))
 
-            ses = TwoFactorSession.objects.create(user=user, ip=ip, user_agent=user_agent, phone=phone, code=j2fa_make_code())
-            request.session['j2fa_session'] = ses.id
+            ses = TwoFactorSession.objects.create(
+                user=user, ip=ip, user_agent=user_agent, phone=phone, code=j2fa_make_code()
+            )
+            request.session["j2fa_session"] = ses.id
         return ses
 
     def get_session_const(self, request: HttpRequest):
@@ -92,33 +94,33 @@ class TwoFactorAuth(TemplateView):
         assert isinstance(user, User)
         ip = get_client_ip(request)[0]
         if ip is None and settings.DEBUG:
-            ip = '127.0.0.1'
-        user_agent = request.META['HTTP_USER_AGENT']
+            ip = "127.0.0.1"
+        user_agent = request.META["HTTP_USER_AGENT"]
         phone = j2fa_phone_filter(self.get_user_phone(user))
         if not phone:
-            raise TwoFactorAuthError(_('your.phone.number.missing.from.system'))
+            raise TwoFactorAuthError(_("your.phone.number.missing.from.system"))
         return user, ip, user_agent, phone
 
     def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         cx = self.get_context_data()
-        form = cx['form']
+        form = cx["form"]
         assert isinstance(form, TwoFactorForm)
 
         if form.is_valid():
             try:
                 ses = self.get_session(request)
                 assert isinstance(ses, TwoFactorSession)
-                code = form.cleaned_data['code']
+                code = form.cleaned_data["code"]
                 user, ip, user_agent, phone = self.get_session_const(request)
                 logger.info('2FA_POST_CODE: %s %s %s "%s" vs %s', user, ip, user_agent, phone, ses.code)
                 if ses.code != code:
                     self.get_session(request, reset=True).send_code()
-                    raise TwoFactorAuthError(_('Invalid code, sending new one'))
+                    raise TwoFactorAuthError(_("Invalid code, sending new one"))
 
-                logger.info('2FA_PASS: %s / %s', user, ses)
+                logger.info("2FA_PASS: %s / %s", user, ses)
                 TwoFactorSession.objects.archive_old_sessions(user, ses)
 
-                return redirect(cx.get('next'))
+                return redirect(cx.get("next"))
             except TwoFactorAuthError as e:
                 form.add_error(None, e)
             except Exception as e:

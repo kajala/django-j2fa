@@ -7,13 +7,13 @@ import j2fa.helpers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('j2fa', '0001_initial'),
+        ("j2fa", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='twofactorsession',
-            name='code',
+            model_name="twofactorsession",
+            name="code",
             field=models.CharField(blank=True, default=j2fa.helpers.j2fa_make_code, max_length=8),
         ),
     ]

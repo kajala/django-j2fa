@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('j2fa', '0002_auto_20180209_0241'),
+        ("j2fa", "0002_auto_20180209_0241"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='twofactorsession',
-            name='active',
+            model_name="twofactorsession",
+            name="active",
             field=models.BooleanField(blank=True, db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name='twofactorsession',
-            name='archived',
+            model_name="twofactorsession",
+            name="archived",
             field=models.BooleanField(blank=True, db_index=True, default=False),
         ),
     ]
