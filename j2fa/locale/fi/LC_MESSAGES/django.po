@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-14 17:15+0000\n"
+"POT-Creation-Date: 2021-03-05 23:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,15 +36,15 @@ msgstr "Jatka"
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
-#: j2fa/views.py:84
-msgid "Too many attempts in 24h"
-msgstr "Liian monta yritystä, odota 24h"
+#: j2fa/views.py:80
+msgid "too.many.failed.attempts"
+msgstr "Liian monta yritystä, yritä huomenna uudestaan"
 
-#: j2fa/views.py:99
+#: j2fa/views.py:97
 msgid "your.phone.number.missing.from.system"
 msgstr "Puhelinnumerosi puuttuu järjestelmästä, ota yhteyttä tekniseen tukeen."
 
-#: j2fa/views.py:116
+#: j2fa/views.py:114
 msgid "Invalid code, sending new one"
 msgstr "Epäkelpo koodi. Saat pian uuden koodin puhelimeesi."
 

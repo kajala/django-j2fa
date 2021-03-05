@@ -10,10 +10,10 @@ J2FA_PHONE_FILTER = re.compile(r"[^+0-9]")
 logger = logging.getLogger(__name__)
 
 
-def j2fa_make_code():
+def j2fa_make_code(min_digits: int = 4, max_digits: int = 6):
     charset = "123456789"
     code = ""
-    for i in range(randint(4, 6)):  # pylint: disable=unused-variable
+    for i in range(randint(min_digits, max_digits)):  # pylint: disable=unused-variable
         code += choice(charset)
     return code
 

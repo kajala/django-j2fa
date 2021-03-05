@@ -15,9 +15,6 @@ from django.utils.timezone import now
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
-
-DEFAULT_MAX_FAILED_ATTEMPTS_24H = 5  # can be overriden with settings.MAX_FAILED_ATTEMPTS_24H
-
 logger = logging.getLogger(__name__)
 
 
@@ -25,11 +22,25 @@ class TwoFactorAuth(TemplateView):
     template_name = "j2fa/ask-code2.html"
     logout_view_name = "admin:logout"
     default_next_view_name = "admin:index"
+    max_failed_attempts_24h = 5
 
-    def get_user_phone(self, user: User):
-        assert user
-        assert user.profile  # type: ignore
-        return user.profile.phone  # type: ignore
+    def get_user_phone(self, user: User) -> str:
+        """
+        Returns User's phone number. By default uses User.profile.phone.
+        :param user: User
+        :return: str
+        """
+        if user.is_authenticated and hasattr(user, "profile") and hasattr(user.profile, "phone"):
+            return user.profile.phone
+        return ""
+
+    def make_2fa_code(self) -> str:
+        """
+        Makes 2FA code.
+        By default makes 4-6 digit integer code as str.
+        :return: str
+        """
+        return j2fa_make_code()
 
     def get_context_data(self, **kw):
         request = self.request
@@ -59,11 +70,9 @@ class TwoFactorAuth(TemplateView):
         assert isinstance(user, User)
 
         cx = self.get_context_data()
-
         try:
             self.get_session(request).send_code()
         except ValidationError as e:
-            logger.info("2FA_WARNING: %s / %s", user, e)
             cx["error"] = " ".join(e.messages)
 
         return render(request, self.template_name, cx)
@@ -75,16 +84,15 @@ class TwoFactorAuth(TemplateView):
         assert ses is None or isinstance(ses, TwoFactorSession)
         if not ses or not ses.is_valid(user, ip, user_agent) or reset:
             since = now() - timedelta(hours=24)
-            if hasattr(settings, "MAX_FAILED_ATTEMPTS_24H"):
-                max_failed_attempts_24h = settings.MAX_FAILED_ATTEMPTS_24H  # type: ignore
-            else:
-                max_failed_attempts_24h = DEFAULT_MAX_FAILED_ATTEMPTS_24H
-
-            if TwoFactorSession.objects.count_failed_attempts(user, ip, since) > max_failed_attempts_24h:
-                raise TwoFactorAuthError(_("Too many attempts in 24h"))
+            if TwoFactorSession.objects.count_failed_attempts(user, ip, since) > self.max_failed_attempts_24h:
+                raise TwoFactorAuthError(_("too.many.failed.attempts"))
 
             ses = TwoFactorSession.objects.create(
-                user=user, ip=ip, user_agent=user_agent, phone=phone, code=j2fa_make_code()
+                user=user,
+                ip=ip,
+                user_agent=user_agent,
+                phone=phone,
+                code=self.make_2fa_code(),
             )
             request.session["j2fa_session"] = ses.id
         return ses
@@ -112,12 +120,12 @@ class TwoFactorAuth(TemplateView):
                 assert isinstance(ses, TwoFactorSession)
                 code = form.cleaned_data["code"]
                 user, ip, user_agent, phone = self.get_session_const(request)
-                logger.info('2FA_POST_CODE: %s %s %s "%s" vs %s', user, ip, user_agent, phone, ses.code)
+                logger.info('2FA: Post %s %s %s "%s" vs %s', user, ip, user_agent, phone, ses.code)
                 if ses.code != code:
                     self.get_session(request, reset=True).send_code()
                     raise TwoFactorAuthError(_("Invalid code, sending new one"))
 
-                logger.info("2FA_PASS: %s / %s", user, ses)
+                logger.info("2FA: Pass %s / %s", user, ses)
                 TwoFactorSession.objects.archive_old_sessions(user, ses)
 
                 return redirect(cx.get("next"))

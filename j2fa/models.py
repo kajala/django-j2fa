@@ -1,6 +1,4 @@
-# pylint: disable=logging-format-interpolation
 import logging
-from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -8,11 +6,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 from j2fa.helpers import j2fa_make_code, j2fa_send_sms
 
-
 logger = logging.getLogger(__name__)
-
-A2FA_SESSION_EXPIRES_MINUTES = 60 * 24
-A2FA_SESSION_CLEANUP_DAYS = 7
 
 
 class TwoFactorSessionManager(models.Manager):
@@ -24,10 +18,6 @@ class TwoFactorSessionManager(models.Manager):
         current.active = True
         current.archived = False
         current.save()
-
-    def clean_up_old_sessions(self):
-        old = now() - timedelta(days=A2FA_SESSION_CLEANUP_DAYS)
-        self.filter(created__lt=old).delete()
 
 
 class TwoFactorSession(models.Model):
@@ -45,11 +35,9 @@ class TwoFactorSession(models.Model):
         return "[{}]".format(self.id)
 
     def is_valid(self, user: User, ip: str, user_agent: str) -> bool:
-        if now() - self.created > timedelta(minutes=A2FA_SESSION_EXPIRES_MINUTES):
-            return False
         return self.user == user and self.ip == ip and self.user_agent == user_agent
 
     def send_code(self):
-        logger.info("2FA_SEND_CODE: {} / {} / {}".format(self.user, self.phone, self.code))
-        if settings.SMS_TOKEN:
+        logger.info("2FA: %s -> '%s' (%s)", self.code, self.phone, self.user)
+        if settings.SMS_TOKEN and self.phone:
             j2fa_send_sms(self.phone, self.code)

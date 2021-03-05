@@ -9,19 +9,19 @@ def parse_requirements(filename, session=False):
     return [line for line in lineiter if line and not line.startswith("#")]
 
 
-install_requires = parse_requirements('requirements.txt', session=False)
+install_requires = parse_requirements("requirements.txt", session=False)
 
 setup(
-    name='django-j2fa',
-    version='3.5.1',
-    author=u'Jani Kajala',
-    author_email='kajala@gmail.com',
-    packages=find_packages(exclude=['project', 'venv']),
+    name="django-j2fa",
+    version="3.6.0",
+    author=u"Jani Kajala",
+    author_email="kajala@gmail.com",
+    packages=find_packages(exclude=["project", "venv"]),
     include_package_data=True,
-    url='',
-    license='MIT licence, see LICENCE.txt',
-    description='2-Factor Authentication for Django projects',
-    long_description=open('README.md').read(),
+    url="",
+    license="MIT licence, see LICENCE.txt",
+    description="2-Factor Authentication for Django projects",
+    long_description=open("README.md").read(),
     zip_safe=False,
-    install_requires=install_requires
+    install_requires=install_requires,
 )
