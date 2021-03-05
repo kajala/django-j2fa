@@ -30,8 +30,8 @@ class TwoFactorAuth(TemplateView):
         :param user: User
         :return: str
         """
-        if user.is_authenticated and hasattr(user, "profile") and hasattr(user.profile, "phone"):
-            return user.profile.phone
+        if user.is_authenticated and hasattr(user, "profile") and hasattr(user.profile, "phone"):  # noqa
+            return user.profile.phone  # noqa
         return ""
 
     def make_2fa_code(self) -> str:

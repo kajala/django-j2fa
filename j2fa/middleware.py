@@ -35,8 +35,8 @@ class Ensure2FactorAuthenticatedMiddleware:
         :param user: User
         :return: bool
         """
-        if user.is_authenticated and hasattr(user, "profile") and hasattr(user.profile, "require_2fa"):
-            return user.profile.require_2fa
+        if user.is_authenticated and hasattr(user, "profile") and hasattr(user.profile, "require_2fa"):  # noqa
+            return user.profile.require_2fa  # noqa
         return True
 
     def is_2fa_route(self, path_info: str) -> bool:
