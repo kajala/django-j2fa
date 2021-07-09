@@ -30,9 +30,7 @@ class Migration(migrations.Migration):
                 ("archived", models.BooleanField(db_index=True, default=False)),
                 (
                     "user",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="+", to=settings.AUTH_USER_MODEL
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="+", to=settings.AUTH_USER_MODEL),
                 ),
             ],
         ),
