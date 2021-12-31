@@ -23,7 +23,7 @@ class TwoFactorSessionManager(models.Manager):
 class TwoFactorSession(models.Model):
     objects = TwoFactorSessionManager()
     created = models.DateTimeField(default=now, db_index=True, blank=True)
-    user = models.ForeignKey(User, related_name="+", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE)
     user_agent = models.CharField(max_length=512)
     ip = models.GenericIPAddressField(db_index=True)
     phone = models.CharField(max_length=32, db_index=True)
