@@ -53,7 +53,6 @@ class Ensure2FactorAuthenticatedMiddleware:
     def __call__(self, request: HttpRequest):
         user = request.user
         if user.is_authenticated:
-            assert isinstance(user, User)
             session = request.session
             assert isinstance(session, SessionBase)
             user_agent = request.META.get("HTTP_USER_AGENT") or ""

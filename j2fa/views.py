@@ -67,7 +67,6 @@ class TwoFactorAuth(TemplateView):
         user = request.user
         if not user.is_authenticated:
             return redirect(self.logout_view_name)
-        assert isinstance(user, User)
 
         cx = self.get_context_data()
         try:
@@ -99,7 +98,6 @@ class TwoFactorAuth(TemplateView):
 
     def get_session_const(self, request: HttpRequest):
         user = request.user
-        assert isinstance(user, User)
         ip = get_client_ip(request)[0]
         if ip is None and settings.DEBUG:
             ip = "127.0.0.1"
