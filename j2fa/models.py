@@ -10,9 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class TwoFactorSessionManager(models.Manager):
-    def count_failed_attempts(self, user, ip, since):
-        return self.filter(Q(ip=ip) | Q(user=user)).filter(created__gt=since, archived=False).count()
-
     def archive_old_sessions(self, user: User, current):
         self.filter(user=user).exclude(id=current.id).update(archived=True, active=False)
         current.active = True
