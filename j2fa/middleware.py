@@ -4,6 +4,7 @@ from j2fa.models import TwoFactorSession
 from django.contrib.auth.models import User
 from django.contrib.sessions.backends.base import SessionBase
 from django.http import HttpRequest
+from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import resolve, reverse
 
@@ -14,7 +15,7 @@ class Ensure2FactorAuthenticatedMiddleware:
     """
     Ensures that User is 2-factor authenticated.
     Place after session init.
-    By default uses User.profile.require_2fa boolean to check if 2FA is required for the user.
+    By default, uses User.profile.require_2fa boolean to check if 2FA is required for the user.
     """
 
     excluded_routes = [
@@ -35,6 +36,8 @@ class Ensure2FactorAuthenticatedMiddleware:
         :param user: User
         :return: bool
         """
+        if hasattr(settings, "J2FA_ENABLED") and not settings.J2FA_ENABLED:
+            return False
         if hasattr(user, "is_hijacked") and user.is_hijacked:  # support django-hijack 3.x
             return False
         if user.is_authenticated and hasattr(user, "profile") and hasattr(user.profile, "require_2fa"):  # type: ignore
@@ -66,6 +69,6 @@ class Ensure2FactorAuthenticatedMiddleware:
                 assert j2fa_session is None or isinstance(j2fa_session, TwoFactorSession)
                 if j2fa_session is None or not j2fa_session.is_valid(user, ip, user_agent) or not j2fa_session.active:
                     logger.info("2FA: route=%s, j2fa_session_id=%s", self.require_2fa_view, j2fa_session_id)
-                    return redirect(reverse(self.require_2fa_view))
+                    return redirect(reverse(self.require_2fa_view) + "?next=" + request.path)
 
         return self.get_response(request)

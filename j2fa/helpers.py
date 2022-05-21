@@ -50,3 +50,4 @@ def j2fa_send_sms(phone: str, message: str, sender: str = "", **kw):
         data[k] = v
     res = requests.post("https://sms.kajala.com/api/sms/", json=data, headers=headers)
     logger.info("HTTP POST https://sms.kajala.com/api/sms/ status %s", res.status_code)
+    return res
