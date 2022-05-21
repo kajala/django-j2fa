@@ -36,9 +36,9 @@ class Ensure2FactorAuthenticatedMiddleware:
         :param user: User
         :return: bool
         """
-        if hasattr(settings, "J2FA_ENABLED") and not settings.J2FA_ENABLED:
+        if hasattr(settings, "J2FA_ENABLED") and not settings.J2FA_ENABLED:  # type: ignore
             return False
-        if hasattr(user, "is_hijacked") and user.is_hijacked:  # support django-hijack 3.x
+        if hasattr(user, "is_hijacked") and user.is_hijacked:  # type: ignore
             return False
         if user.is_authenticated and hasattr(user, "profile") and hasattr(user.profile, "require_2fa"):  # type: ignore
             return user.profile.require_2fa  # type: ignore

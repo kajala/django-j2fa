@@ -76,7 +76,7 @@ class TwoFactorAuth(TemplateView):
 
         return render(request, self.template_name, cx)
 
-    def count_failed_attempts(self, user, ip, since) -> int:
+    def count_failed_attempts(self, user, ip, since) -> int:  # type: ignore
         return TwoFactorSession.objects.all().filter(user=user, created__gt=since, archived=False).count()
 
     def get_session(self, request: HttpRequest, reset: bool = False) -> TwoFactorSession:
@@ -105,7 +105,7 @@ class TwoFactorAuth(TemplateView):
         if ip is None and settings.DEBUG:
             ip = "127.0.0.1"
         user_agent = request.META["HTTP_USER_AGENT"]
-        phone = j2fa_phone_filter(self.get_user_phone(user))
+        phone = j2fa_phone_filter(self.get_user_phone(user))  # type: ignore
         if not phone:
             raise TwoFactorAuthError(_("your.phone.number.missing.from.system"))
         return user, ip, user_agent, phone
