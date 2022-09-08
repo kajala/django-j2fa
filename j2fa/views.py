@@ -1,5 +1,5 @@
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.conf import settings
 from ipware.ip import get_client_ip  # type: ignore  # pytype: disable=import-error
 from j2fa.errors import TwoFactorAuthError
@@ -76,7 +76,7 @@ class TwoFactorAuth(TemplateView):
 
         return render(request, self.template_name, cx)
 
-    def count_failed_attempts(self, user, ip, since) -> int:  # type: ignore
+    def count_failed_attempts(self, user, since: datetime) -> int:
         return TwoFactorSession.objects.all().filter(user=user, created__gt=since, archived=False).count()
 
     def get_session(self, request: HttpRequest, force: bool = False) -> TwoFactorSession:
@@ -86,7 +86,7 @@ class TwoFactorAuth(TemplateView):
         assert ses is None or isinstance(ses, TwoFactorSession)
         if not ses or not ses.is_valid(user, ip, user_agent) or force:
             since = now() - timedelta(hours=24)
-            if self.count_failed_attempts(user, ip, since) > self.max_failed_attempts_24h:
+            if self.count_failed_attempts(user, since) > self.max_failed_attempts_24h:
                 raise TwoFactorAuthError(_("too.many.failed.attempts"))
 
             ses = TwoFactorSession.objects.create(
