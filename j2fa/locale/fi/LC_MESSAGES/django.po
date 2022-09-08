@@ -56,7 +56,7 @@ msgid "your.phone.number.missing.from.system"
 msgstr "Puhelinnumerosi puuttuu järjestelmästä, ota yhteyttä tekniseen tukeen."
 
 #: j2fa/views.py:127
-msgid "Invalid code, sending new one"
+msgid "Invalid code, sending a new one."
 msgstr "Epäkelpo koodi. Saat pian uuden koodin puhelimeesi."
 
 #~ msgid "2FA"

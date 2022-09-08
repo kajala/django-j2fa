@@ -32,8 +32,18 @@ class TwoFactorSession(models.Model):
     def __str__(self):
         return "[{}]".format(self.id)
 
+    @staticmethod
+    def check_ip(ip_a: str, ip_b: str) -> bool:
+        """
+        Only compares first 2 parts of the IP address to avoid issues with frequently changing IPs.
+        :param ip_a:
+        :param ip_b:
+        :return: bool
+        """
+        return ip_a.split(".")[:2] == ip_b.split(".")[:2]
+
     def is_valid(self, user: User, ip: str, user_agent: str) -> bool:
-        return self.user == user and self.ip == ip and self.user_agent == user_agent
+        return self.user == user and self.check_ip(self.ip, ip) and self.user_agent[:512] == user_agent[:512]
 
     def send_code(self):
         logger.info("2FA: %s -> '%s' (%s)", self.code, self.phone, self.user)

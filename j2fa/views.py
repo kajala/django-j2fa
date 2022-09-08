@@ -70,7 +70,7 @@ class TwoFactorAuth(TemplateView):
 
         cx = self.get_context_data()
         try:
-            self.get_session(request).send_code()
+            self.get_session(request)
         except ValidationError as e:
             cx["error"] = " ".join(e.messages)
 
@@ -79,12 +79,12 @@ class TwoFactorAuth(TemplateView):
     def count_failed_attempts(self, user, ip, since) -> int:  # type: ignore
         return TwoFactorSession.objects.all().filter(user=user, created__gt=since, archived=False).count()
 
-    def get_session(self, request: HttpRequest, reset: bool = False) -> TwoFactorSession:
+    def get_session(self, request: HttpRequest, force: bool = False) -> TwoFactorSession:
         user, ip, user_agent, phone = self.get_session_const(request)
         ses_id = request.session.get("j2fa_session")
         ses = TwoFactorSession.objects.filter(id=ses_id).first() if ses_id else None
         assert ses is None or isinstance(ses, TwoFactorSession)
-        if not ses or not ses.is_valid(user, ip, user_agent) or reset:
+        if not ses or not ses.is_valid(user, ip, user_agent) or force:
             since = now() - timedelta(hours=24)
             if self.count_failed_attempts(user, ip, since) > self.max_failed_attempts_24h:
                 raise TwoFactorAuthError(_("too.many.failed.attempts"))
@@ -96,6 +96,7 @@ class TwoFactorAuth(TemplateView):
                 phone=phone,
                 code=self.make_2fa_code(),
             )
+            ses.send_code()
             request.session["j2fa_session"] = ses.id
         return ses
 
@@ -123,8 +124,8 @@ class TwoFactorAuth(TemplateView):
                 user, ip, user_agent, phone = self.get_session_const(request)
                 logger.info('2FA: Post %s %s %s "%s" vs %s', user, ip, user_agent, phone, ses.code)
                 if ses.code != code:
-                    self.get_session(request, reset=True).send_code()
-                    raise TwoFactorAuthError(_("Invalid code, sending new one"))
+                    self.get_session(request, force=True)
+                    raise TwoFactorAuthError(_("Invalid code, sending a new one."))
 
                 logger.info("2FA: Pass %s / %s", user, ses)
                 TwoFactorSession.objects.archive_old_sessions(user, ses)
