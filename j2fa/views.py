@@ -117,9 +117,10 @@ class TwoFactorAuth(TemplateView):
             ip = "127.0.0.1"
         user_agent = request.META["HTTP_USER_AGENT"]
         phone = j2fa_phone_filter(self.get_user_phone(user))  # type: ignore
+        email = self.get_user_email(user)  # type: ignore
         if not phone:
             raise TwoFactorAuthError(_("your.phone.number.missing.from.system"))
-        return user, ip, user_agent, phone, self.get_user_email(user)
+        return user, ip, user_agent, phone, email
 
     def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         cx = self.get_context_data()
