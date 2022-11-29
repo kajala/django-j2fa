@@ -24,6 +24,15 @@ class TwoFactorAuth(TemplateView):
     default_next_view_name = "admin:index"
     max_failed_attempts_24h = 5
 
+    def get_user_email(self, user: User) -> str:
+        """
+        Allow user-specific customization of email address to receive the 2FA code.
+        Return empty string if user is not supposed to get codes via email but email sending is enabled (J2FA_SEND_TO_EMAIL=True).
+        :param user: User
+        :return: Email address (if email should be used to send the code, empty otherwise)
+        """
+        return user.email
+
     def get_user_phone(self, user: User) -> str:
         """
         Returns User's phone number. By default uses User.profile.phone.
@@ -80,7 +89,7 @@ class TwoFactorAuth(TemplateView):
         return TwoFactorSession.objects.all().filter(user=user, created__gt=since, archived=False).count()
 
     def get_session(self, request: HttpRequest, force: bool = False) -> TwoFactorSession:
-        user, ip, user_agent, phone = self.get_session_const(request)
+        user, ip, user_agent, phone, email = self.get_session_const(request)
         ses_id = request.session.get("j2fa_session")
         ses = TwoFactorSession.objects.filter(id=ses_id).first() if ses_id else None
         assert ses is None or isinstance(ses, TwoFactorSession)
@@ -94,6 +103,7 @@ class TwoFactorAuth(TemplateView):
                 ip=ip,
                 user_agent=user_agent,
                 phone=phone,
+                email=email,
                 code=self.make_2fa_code(),
             )
             ses.send_code()
@@ -109,7 +119,7 @@ class TwoFactorAuth(TemplateView):
         phone = j2fa_phone_filter(self.get_user_phone(user))  # type: ignore
         if not phone:
             raise TwoFactorAuthError(_("your.phone.number.missing.from.system"))
-        return user, ip, user_agent, phone
+        return user, ip, user_agent, phone, self.get_user_email(user)
 
     def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         cx = self.get_context_data()
@@ -121,8 +131,8 @@ class TwoFactorAuth(TemplateView):
                 ses = self.get_session(request)
                 assert isinstance(ses, TwoFactorSession)
                 code = form.cleaned_data["code"]
-                user, ip, user_agent, phone = self.get_session_const(request)
-                logger.info('2FA: Post %s %s %s "%s" vs %s', user, ip, user_agent, phone, ses.code)
+                user, ip, user_agent, phone, email = self.get_session_const(request)
+                logger.info("2FA: Post %s %s %s %s %s vs %s", user, ip, user_agent, phone, email, ses.code)
                 if ses.code != code:
                     self.get_session(request, force=True)
                     raise TwoFactorAuthError(_("Invalid code, sending a new one."))

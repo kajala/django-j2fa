@@ -25,6 +25,7 @@ class TwoFactorSession(models.Model):
     user_agent = models.CharField(max_length=512)
     ip = models.GenericIPAddressField(db_index=True)
     phone = models.CharField(max_length=32, db_index=True)
+    email = models.EmailField(blank=True, default="")
     code = models.CharField(max_length=8, default=j2fa_make_code, blank=True)
     active = models.BooleanField(default=False, db_index=True, blank=True)
     archived = models.BooleanField(default=False, db_index=True, blank=True)
@@ -53,16 +54,17 @@ class TwoFactorSession(models.Model):
                 "J2FA_SEND_TO_EMAIL",
             )
             and settings.J2FA_SEND_TO_EMAIL
+            and self.email
         )
         if settings.SMS_TOKEN and self.phone:
             res = j2fa_send_sms(self.phone, self.code)
             if res.status_code >= 300 and hasattr(settings, "EMAIL_HOST") and settings.EMAIL_HOST:
                 logger.warning("SMS sending failed to %s (%s), trying to send code by email", self.phone, self.user)
                 send_by_email = settings.J2FA_FALLBACK_TO_EMAIL if hasattr(settings, "J2FA_FALLBACK_TO_EMAIL") else True
-        if send_by_email and self.user.email:
-            logger.info("2FA (email): %s -> %s (%s)", self.code, self.user.email, self.user)
+        if send_by_email:
+            logger.info("2FA (email): %s -> %s (%s)", self.code, self.email, self.user)
             subject = settings.SMS_SENDER_NAME + ": " + _("One time login code")
             body = _("j2fa.code.email.body").format(code=self.code)
             sender = settings.DEFAULT_FROM_EMAIL
-            recipient = self.user.email
+            recipient = self.email
             send_mail(subject, body, sender, [recipient], fail_silently=False)
