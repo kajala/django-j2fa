@@ -10,16 +10,7 @@ from j2fa.helpers import j2fa_make_code, j2fa_send_sms
 logger = logging.getLogger(__name__)
 
 
-class TwoFactorSessionManager(models.Manager):
-    def archive_old_sessions(self, user: User, current):
-        self.filter(user=user).exclude(id=current.id).update(archived=True, active=False)
-        current.active = True
-        current.archived = False
-        current.save()
-
-
 class TwoFactorSession(models.Model):
-    objects = TwoFactorSessionManager()
     created = models.DateTimeField(default=now, db_index=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE)
     user_agent = models.CharField(max_length=512)
@@ -42,6 +33,12 @@ class TwoFactorSession(models.Model):
         :return: bool
         """
         return ip_a.split(".")[:2] == ip_b.split(".")[:2]
+
+    def activate(self):
+        self.active = True
+        self.archived = False
+        self.save()
+        TwoFactorSession.objects.filter(user=self.user).exclude(id=self.id).update(archived=True, active=False)
 
     def is_valid(self, user: User, ip: str, user_agent: str) -> bool:
         return self.user == user and self.check_ip(self.ip, ip) and self.user_agent[:512] == user_agent[:512]

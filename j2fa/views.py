@@ -101,11 +101,12 @@ class TwoFactorAuth(TemplateView):
             ses = TwoFactorSession.objects.create(
                 user=user,
                 ip=ip,
-                user_agent=user_agent,
+                user_agent=user_agent[:512],
                 phone=phone,
                 email=email,
                 code=self.make_2fa_code(),
             )
+            assert isinstance(ses, TwoFactorSession)
             ses.send_code()
             request.session["j2fa_session"] = ses.id
         return ses
@@ -139,7 +140,7 @@ class TwoFactorAuth(TemplateView):
                     raise TwoFactorAuthError(_("Invalid code, sending a new one."))
 
                 logger.info("2FA: Pass %s / %s", user, ses)
-                TwoFactorSession.objects.archive_old_sessions(user, ses)
+                ses.activate()
 
                 return redirect(cx.get("next"))
             except TwoFactorAuthError as e:
