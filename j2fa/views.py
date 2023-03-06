@@ -22,7 +22,8 @@ class TwoFactorAuth(TemplateView):
     template_name = "j2fa/ask-code2.html"
     logout_view_name = "admin:logout"
     default_next_view_name = "admin:index"
-    max_failed_attempts_24h = 5
+    max_failed_attempts = 5
+    max_failed_attempts_hours = 24
 
     def get_user_email(self, user: User) -> str:
         """
@@ -94,8 +95,8 @@ class TwoFactorAuth(TemplateView):
         ses = TwoFactorSession.objects.filter(id=ses_id).first() if ses_id else None
         assert ses is None or isinstance(ses, TwoFactorSession)
         if not ses or not ses.is_valid(user, ip, user_agent) or force:
-            since = now() - timedelta(hours=24)
-            if self.count_failed_attempts(user, since) > self.max_failed_attempts_24h:
+            since = now() - timedelta(hours=self.max_failed_attempts_hours)
+            if self.count_failed_attempts(user, since) > self.max_failed_attempts:
                 raise TwoFactorAuthError(_("too.many.failed.attempts"))
 
             ses = TwoFactorSession.objects.create(
