@@ -143,9 +143,9 @@ class TwoFactorAuth(TemplateView):
                 ses.activate()
 
                 return redirect(cx.get("next"))
-            except TwoFactorAuthError as e:
-                form.add_error(None, e)
-            except Exception as e:
-                form.add_error(None, e)
+            except TwoFactorAuthError as exc:
+                form.add_error(None, exc)
+            except Exception as exc:
+                form.add_error(None, exc)
 
         return render(request, self.template_name, cx)

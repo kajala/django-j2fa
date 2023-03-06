@@ -38,7 +38,7 @@ class TwoFactorSession(models.Model):
         self.active = True
         self.archived = False
         self.save()
-        TwoFactorSession.objects.filter(user=self.user).exclude(id=self.id).update(archived=True, active=False)
+        TwoFactorSession.objects.all().filter(user=self.user).exclude(id=self.id).update(archived=True, active=False)
 
     def is_valid(self, user: User, ip: str, user_agent: str) -> bool:
         return self.user == user and self.check_ip(self.ip, ip) and self.user_agent[:512] == user_agent[:512]
