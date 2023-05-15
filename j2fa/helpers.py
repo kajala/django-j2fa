@@ -23,13 +23,16 @@ def j2fa_phone_filter(v: str) -> str:
 
 
 def j2fa_send_sms(phone: str, message: str, sender: str = "", **kw):
-    """
-    Sends SMS via Kajala Group SMS API. Contact info@kajala.com for access.
-    :param phone: Phone number
-    :param message: Message to be esnd
-    :param sender: Sender (max 11 characters)
-    :param kw: Variable key-value pairs to be sent to SMS API
-    :return: Response from requests.post
+    """Sends SMS via Kajala Group SMS API. Contact info@kajala.com for access.
+
+    Args:
+        phone: Phone number
+        message: Message to be esnd
+        sender: Sender (max 11 characters)
+        **kw: Variable key-value pairs to be sent to SMS API
+
+    Returns:
+        Response from requests.post
     """
     if not hasattr(settings, "SMS_TOKEN") or not settings.SMS_TOKEN:
         raise Exception("Invalid configuration: settings.SMS_TOKEN missing")
