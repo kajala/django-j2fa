@@ -43,8 +43,8 @@ class TwoFactorSession(models.Model):
     def is_valid(self, user: User, ip: str, user_agent: str) -> bool:
         return self.user == user and self.check_ip(self.ip, ip) and self.user_agent[:512] == user_agent[:512]
 
-    def send_code(self):
-        logger.info("2FA: %s -> '%s' (%s)", self.code, self.phone, self.user)
+    def send_code(self, channel: str = ""):
+        logger.info("2FA: %s -> '%s' (%s) %s", self.code, self.phone, self.user, channel)
         send_by_email = (
             hasattr(
                 settings,
@@ -54,7 +54,7 @@ class TwoFactorSession(models.Model):
             and self.email
         )
         if settings.SMS_TOKEN and self.phone:
-            res = j2fa_send_sms(self.phone, self.code)
+            res = j2fa_send_sms(self.phone, self.code, channel=channel)
             if res.status_code >= 300 and hasattr(settings, "EMAIL_HOST") and settings.EMAIL_HOST:
                 logger.warning("SMS sending failed to %s (%s), trying to send code by email", self.phone, self.user)
                 send_by_email = settings.J2FA_FALLBACK_TO_EMAIL if hasattr(settings, "J2FA_FALLBACK_TO_EMAIL") else True

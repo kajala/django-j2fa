@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-21 19:27+0000\n"
+"POT-Creation-Date: 2023-09-12 23:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,36 +23,44 @@ msgstr ""
 msgid "2-Factor Authentication"
 msgstr ""
 
-#: j2fa/forms.py:6 j2fa/templates/j2fa/ask-code2.html:59
+#: j2fa/forms.py:6 j2fa/templates/j2fa/ask-code2.html:64
 msgid "two.factor.code.label"
 msgstr "Code you received by SMS"
 
-#: j2fa/models.py:43
+#: j2fa/models.py:63
 msgid "One time login code"
 msgstr ""
 
-#: j2fa/models.py:44
+#: j2fa/models.py:64
 msgid "j2fa.code.email.body"
 msgstr ""
 "{code} is your one time login code. Do not share this code with anyone and "
 "ignore this email if you did not request the code."
 
-#: j2fa/templates/j2fa/ask-code1.html:39 j2fa/templates/j2fa/ask-code2.html:65
+#: j2fa/templates/j2fa/ask-code1.html:39 j2fa/templates/j2fa/ask-code2.html:70
 msgid "Continue"
 msgstr ""
 
-#: j2fa/templates/j2fa/ask-code1.html:44 j2fa/templates/j2fa/ask-code2.html:69
+#: j2fa/templates/j2fa/ask-code1.html:44 j2fa/templates/j2fa/ask-code2.html:76
 msgid "Logout"
 msgstr ""
 
-#: j2fa/views.py:90
+#: j2fa/templates/j2fa/ask-code2.html:75
+msgid "sms.not.received.text"
+msgstr "Did not receive the message?"
+
+#: j2fa/views.py:91
+msgid "msg.resent"
+msgstr "Message re-sent"
+
+#: j2fa/views.py:109
 msgid "too.many.failed.attempts"
 msgstr "Too many failed attempts, try again tomorrow"
 
-#: j2fa/views.py:110
+#: j2fa/views.py:133
 msgid "your.phone.number.missing.from.system"
 msgstr "Your phone number is missing from the system"
 
-#: j2fa/views.py:127
-msgid "Invalid code, sending new one"
+#: j2fa/views.py:150
+msgid "Invalid code, sending a new one."
 msgstr ""

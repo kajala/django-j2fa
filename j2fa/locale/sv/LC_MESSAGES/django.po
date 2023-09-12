@@ -1,0 +1,48 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: jani\n"
+"POT-Creation-Date: 2023-09-12 18:08-0500\n"
+"PO-Revision-Date: 2023-09-12 18:08-0500\n"
+"Last-Translator: Google Translate API v3\n"
+"Language-Team: sv <jani>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "2-Factor Authentication"
+msgstr "2-faktorsautentisering"
+
+msgid "two.factor.code.label"
+msgstr "Kod du fått via SMS"
+
+msgid "One time login code"
+msgstr "Engångs inloggningskod"
+
+msgid "j2fa.code.email.body"
+msgstr ""
+"{code} är din engångskod för inloggning. Dela inte den här koden med någon "
+"och ignorera detta e-postmeddelande om du inte har begärt koden."
+
+msgid "Continue"
+msgstr "Fortsätta"
+
+msgid "Logout"
+msgstr "Logga ut"
+
+msgid "sms.not.received.text"
+msgstr "Fick du inte meddelandet?"
+
+msgid "msg.resent"
+msgstr "Meddelandet har skickats på nytt"
+
+msgid "too.many.failed.attempts"
+msgstr "För många misslyckade försök, försök igen imorgon"
+
+msgid "your.phone.number.missing.from.system"
+msgstr "Ditt telefonnummer saknas i systemet"
+
+msgid "Invalid code, sending a new one."
+msgstr "Ogiltig kod, skickar en ny."

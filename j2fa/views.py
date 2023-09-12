@@ -80,7 +80,16 @@ class TwoFactorAuth(TemplateView):
 
         cx = self.get_context_data()
         try:
-            self.get_session(request)
+            ses = self.get_session(request)
+            channel = request.GET.get("channel") or ""
+            next_path = request.GET.get("next") or ""
+            if channel:
+                ses.send_code(channel=channel)
+                return redirect(reverse("j2fa-obtain-auth") + f"?msg-resent={channel}&next={next_path}")
+            msg_resent = request.GET.get("msg-resent") or ""
+            if msg_resent:
+                cx["info"] = _("msg.resent")
+                cx["alt_channel"] = "I" if msg_resent == "M" else "M"
         except ValidationError as e:
             cx["error"] = " ".join(e.messages)
 

@@ -22,7 +22,7 @@ def j2fa_phone_filter(v: str) -> str:
     return J2FA_PHONE_FILTER.sub("", v)
 
 
-def j2fa_send_sms(phone: str, message: str, sender: str = "", **kw):
+def j2fa_send_sms(phone: str, message: str, sender: str = "", channel: str = "", **kwargs):
     """Sends SMS via Kajala Group SMS API. Contact info@kajala.com for access.
 
     Args:
@@ -49,7 +49,9 @@ def j2fa_send_sms(phone: str, message: str, sender: str = "", **kw):
         "msg": message,
         "src": sender,
     }
-    for k, v in kw.items():
+    if channel:
+        data["channel"] = channel
+    for k, v in kwargs.items():
         data[k] = v
     res = requests.post("https://sms.kajala.com/api/sms/", json=data, headers=headers)
     logger.info("HTTP POST https://sms.kajala.com/api/sms/ status %s", res.status_code)

@@ -41,6 +41,11 @@
                     <form action="" method="post" role="form">
                         {% csrf_token %}
                         <fieldset>
+                            {% if info %}
+                                <div class="alert alert-success">
+                                    <p class="form-error">{{ info }}</p>
+                                </div>
+                            {% endif %}
                             {% if form.non_field_errors or form.code.errors or error %}
                                 <div class="alert alert-danger">
                                     <!--<a class="close" data-dismiss="alert">&times;</a>-->
@@ -66,7 +71,10 @@
                         <input type="hidden" name="next" value="{{ next }}"/>
                     </form>
 
-                    <a href="{% url 'admin:logout' %}">{% trans 'Logout' %}</a>
+                    <div style="margin-top:1em;">
+                        <a href="{% url 'j2fa-obtain-auth' %}?channel={{ alt_channel|default:"M" }}&next={{ next }}">{% trans 'sms.not.received.text' %}</a>
+                        | <a href="{% url 'admin:logout' %}">{% trans 'Logout' %}</a>
+                    </div>
                 </div>
             </div>
         </div>
