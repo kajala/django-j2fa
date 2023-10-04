@@ -22,7 +22,7 @@ in ``settings``:
 * ``SMS_SENDER_NAME``: SMS sender name, max 13 characters
 * ``J2FA_ENABLED``: Enabled/disable 2FA system-wide. Default is True
 * ``J2FA_SEND_TO_EMAIL``: Send 2FA codes also to email. Default is False.
-* ``J2FA_FALLBACK_TO_EMAIL``: Send 2FA codes to email if SMS sending fails. Default is True.
+* ``J2FA_FALLBACK_TO_EMAIL``: Send 2FA codes to email if SMS sending fails. Default is False.
 
 
 Static Code Analysis

@@ -57,7 +57,7 @@ class TwoFactorSession(models.Model):
             res = j2fa_send_sms(self.phone, self.code, channel=channel)
             if res.status_code >= 300 and hasattr(settings, "EMAIL_HOST") and settings.EMAIL_HOST:
                 logger.warning("SMS sending failed to %s (%s), trying to send code by email", self.phone, self.user)
-                send_by_email = settings.J2FA_FALLBACK_TO_EMAIL if hasattr(settings, "J2FA_FALLBACK_TO_EMAIL") else True
+                send_by_email = settings.J2FA_FALLBACK_TO_EMAIL if hasattr(settings, "J2FA_FALLBACK_TO_EMAIL") else False
         if send_by_email:
             logger.info("2FA (email): %s -> %s (%s)", self.code, self.email, self.user)
             subject = settings.SMS_SENDER_NAME + ": " + _("One time login code")
