@@ -16,7 +16,8 @@ django-extensions
 python-dotenv
 pre-commit
 black
-openpyxl==3.0.7
+psycopg
+openpyxl
 redis
-psycopg2==2.9.3 --no-binary 2.9.3
+appengine-python-standard
 
