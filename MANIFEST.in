@@ -6,3 +6,5 @@ prune downloads
 prune uploads
 prune logs
 prune data
+prune .idea
+

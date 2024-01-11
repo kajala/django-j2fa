@@ -10,6 +10,7 @@ python3 setup.py sdist
 # clean venv/ directory from the dist
 # TODO: cleaner way to do this (using setup.py/MANIFEST.in)
 cd dist
+rm -rf .idea
 FILE="$PROJECT-$REL"
 echo $FILE
 cd dist
