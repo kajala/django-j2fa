@@ -2,10 +2,8 @@ import logging
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
-from django.core.mail import send_mail
-from django.utils.translation import gettext as _
 from django.utils.timezone import now
-from j2fa.helpers import j2fa_make_code, j2fa_send_sms
+from j2fa.helpers import j2fa_make_code
 
 logger = logging.getLogger(__name__)
 
@@ -42,26 +40,3 @@ class TwoFactorSession(models.Model):
 
     def is_valid(self, user: User, ip: str, user_agent: str) -> bool:
         return self.user == user and self.check_ip(self.ip, ip) and self.user_agent[:512] == user_agent[:512]
-
-    def send_code(self, channel: str = ""):
-        logger.info("2FA: %s -> '%s' (%s) %s", self.code, self.phone, self.user, channel)
-        send_by_email = (
-            hasattr(
-                settings,
-                "J2FA_SEND_TO_EMAIL",
-            )
-            and settings.J2FA_SEND_TO_EMAIL
-            and self.email
-        )
-        if settings.SMS_TOKEN and self.phone:
-            res = j2fa_send_sms(self.phone, self.code, channel=channel)
-            if res.status_code >= 300 and hasattr(settings, "EMAIL_HOST") and settings.EMAIL_HOST:
-                logger.warning("SMS sending failed to %s (%s), trying to send code by email", self.phone, self.user)
-                send_by_email = settings.J2FA_FALLBACK_TO_EMAIL if hasattr(settings, "J2FA_FALLBACK_TO_EMAIL") else False
-        if send_by_email:
-            logger.info("2FA (email): %s -> %s (%s)", self.code, self.email, self.user)
-            subject = settings.SMS_SENDER_NAME + ": " + _("One time login code")
-            body = _("j2fa.code.email.body").format(code=self.code)
-            sender = settings.DEFAULT_FROM_EMAIL
-            recipient = self.email
-            send_mail(subject, body, sender, [recipient], fail_silently=False)

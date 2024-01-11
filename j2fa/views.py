@@ -1,11 +1,12 @@
 import logging
 from datetime import timedelta, datetime
+from typing import List, Tuple, Union
 from django.conf import settings
 from ipware.ip import get_client_ip  # type: ignore  # pytype: disable=import-error
 from j2fa.errors import TwoFactorAuthError
 from j2fa.forms import TwoFactorForm
 from j2fa.models import TwoFactorSession
-from j2fa.helpers import j2fa_make_code, j2fa_phone_filter
+from j2fa.helpers import j2fa_make_code, j2fa_phone_filter, j2fa_send_sms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
@@ -14,6 +15,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
+from django.core.mail import send_mail
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +86,7 @@ class TwoFactorAuth(TemplateView):
             channel = request.GET.get("channel") or ""
             next_path = request.GET.get("next") or ""
             if channel:
-                ses.send_code(channel=channel)
+                self.send_code(ses, channel=channel)
                 return redirect(reverse("j2fa-obtain-auth") + f"?msg-resent={channel}&next={next_path}")
             msg_resent = request.GET.get("msg-resent") or ""
             if msg_resent:
@@ -97,6 +99,53 @@ class TwoFactorAuth(TemplateView):
 
     def count_failed_attempts(self, user, since: datetime) -> int:
         return TwoFactorSession.objects.all().filter(user=user, created__gt=since, archived=False).count()
+
+    def send_sms_code(self, phone: str, msg: str, channel: str = "") -> int:
+        """
+        Send SMS code.
+        Args:
+            phone: str
+            msg: str
+            channel: str
+
+        Returns:
+            HTTP response status, >300 on error.
+        """
+        res = j2fa_send_sms(phone, msg, channel=channel)
+        return res.status_code
+
+    def send_email_code(
+        self, subject: str, body: str, sender: Union[str, Tuple[str, str]], recipient_list: List[Union[str, Tuple[str, str]]], fail_silently: bool = False
+    ):
+        """
+        Emails the OTP code
+        Args:
+            subject:
+            body:
+            sender:
+            recipient_list:
+            fail_silently:
+
+        Returns:
+            None
+        """
+        send_mail(subject, body, sender, recipient_list, fail_silently=fail_silently)
+
+    def send_code(self, ses: TwoFactorSession, channel: str = ""):
+        logger.info("2FA: %s -> '%s' (%s) %s", ses.code, ses.phone, ses.user, channel)
+        send_by_email = hasattr(settings, "J2FA_SEND_TO_EMAIL") and settings.J2FA_SEND_TO_EMAIL and ses.email
+        if settings.SMS_TOKEN and ses.phone:
+            status_code = self.send_sms_code(ses.phone, ses.code, channel=channel)
+            if status_code >= 300 and hasattr(settings, "EMAIL_HOST") and settings.EMAIL_HOST:
+                logger.warning("SMS sending failed to %s (%s), trying to send code by email", ses.phone, ses.user)
+                send_by_email = settings.J2FA_FALLBACK_TO_EMAIL if hasattr(settings, "J2FA_FALLBACK_TO_EMAIL") else False
+        if send_by_email:
+            logger.info("2FA (email): %s -> %s (%s)", ses.code, ses.email, ses.user)
+            subject = settings.SMS_SENDER_NAME + ": " + _("One time login code")
+            body = _("j2fa.code.email.body").format(code=ses.code)
+            sender = settings.DEFAULT_FROM_EMAIL
+            recipient = ses.email
+            self.send_email_code(subject, body, sender, [recipient], fail_silently=False)
 
     def get_session(self, request: HttpRequest, force: bool = False) -> TwoFactorSession:
         user, ip, user_agent, phone, email = self.get_session_const(request)
@@ -117,7 +166,7 @@ class TwoFactorAuth(TemplateView):
                 code=self.make_2fa_code(),
             )
             assert isinstance(ses, TwoFactorSession)
-            ses.send_code()
+            self.send_code(ses)
             request.session["j2fa_session"] = ses.id
         return ses
 
