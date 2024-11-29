@@ -73,7 +73,10 @@
 
                     <div style="margin-top:1em;">
                         <a href="{% url 'j2fa-obtain-auth' %}?channel={{ alt_channel|default:"M" }}&next={{ next }}">{% trans 'sms.not.received.text' %}</a>
-                        | <a href="{% url 'admin:logout' %}">{% trans 'Logout' %}</a>
+                        | <form id="logout-form" method="post" action="{% url 'admin:logout' %}" style="display: inline-block;" >
+                              {% csrf_token %}
+                              <button class="btn btn-link" type="submit">{% translate "Logout" %}</button>
+                          </form>
                     </div>
                 </div>
             </div>
