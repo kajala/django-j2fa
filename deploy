@@ -1,6 +1,7 @@
 DIR=`pwd`
 PROJECT_DIR=`basename $DIR`
-PROJECT="`echo $PROJECT_DIR | tr '-' '_'`"
+# PROJECT="`echo $PROJECT_DIR | tr '-' '_'`"
+PROJECT=$PROJECT_DIR
 REL=`parse-setup-version.py`
 echo "Making release $REL of $PROJECT"
 
