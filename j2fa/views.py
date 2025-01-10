@@ -197,7 +197,7 @@ class TwoFactorAuth(TemplateView):
                 user, ip, user_agent, phone, email = self.get_session_const(request)
                 logger.info("2FA: Post %s %s %s %s %s vs %s", user, ip, user_agent, phone, email, ses.code)
                 if ses.code != code:
-                    code_expire_time_s = int(settings.J2FA_CODE_EXPIRE_TIME_S) if hasattr(settings, "J2FA_CODE_EXPIRE_TIME_S") else 0
+                    code_expire_time_s = self.code_expires_seconds
                     if code_expire_time_s > 0 and code:
                         time_now = now()
                         old = time_now - timedelta(seconds=code_expire_time_s)
