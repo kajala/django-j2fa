@@ -177,7 +177,7 @@ class TwoFactorAuth(TemplateView):
         ip = get_client_ip(request)[0]
         if ip is None and settings.DEBUG:
             ip = "127.0.0.1"
-        user_agent = request.META["HTTP_USER_AGENT"]
+        user_agent = str(request.META["HTTP_USER_AGENT"])[:512]
         phone = j2fa_phone_filter(self.get_user_phone(user))  # type: ignore
         email = self.get_user_email(user)  # type: ignore
         if not phone:
@@ -197,9 +197,21 @@ class TwoFactorAuth(TemplateView):
                 user, ip, user_agent, phone, email = self.get_session_const(request)
                 logger.info("2FA: Post %s %s %s %s %s vs %s", user, ip, user_agent, phone, email, ses.code)
                 if ses.code != code:
-                    self.get_session(request, force=True)
-                    raise TwoFactorAuthError(_("Invalid code, sending a new one."))
-
+                    code_expire_time_s = int(settings.J2FA_CODE_EXPIRE_TIME_S) if hasattr(settings, "J2FA_CODE_EXPIRE_TIME_S") else 0
+                    if code_expire_time_s > 0 and code:
+                        time_now = now()
+                        old = time_now - timedelta(seconds=code_expire_time_s)
+                        recent = (
+                            TwoFactorSession.objects.filter(created__gte=old, user=user, ip=ip, user_agent=user_agent[:512], code=code, archived=False)
+                            .order_by("-id")
+                            .first()
+                        )
+                        if recent is not None:
+                            assert isinstance(recent, TwoFactorSession)
+                            logger.info("2FA: Passing %s as code %s matches %s (age %s)", user, code, recent, time_now - recent.created)
+                    else:
+                        self.get_session(request, force=True)
+                        raise TwoFactorAuthError(_("Invalid code, sending a new one."))
                 logger.info("2FA: Pass %s / %s", user, ses)
                 ses.activate()
 
