@@ -209,6 +209,9 @@ class TwoFactorAuth(TemplateView):
                         if recent is not None:
                             assert isinstance(recent, TwoFactorSession)
                             logger.info("2FA: Passing %s as code %s matches %s (age %s)", user, code, recent, time_now - recent.created)
+                        else:
+                            self.get_session(request, force=True)
+                            raise TwoFactorAuthError(_("Invalid code, sending a new one."))
                     else:
                         self.get_session(request, force=True)
                         raise TwoFactorAuthError(_("Invalid code, sending a new one."))
