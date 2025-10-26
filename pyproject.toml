@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-j2fa"
-version = "3.9.2"
+version = "3.9.3"
 description = "2-factor SMS authentication for Django projects."
 readme = "README.md"
 requires-python = ">=3.8"
