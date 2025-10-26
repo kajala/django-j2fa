@@ -36,6 +36,7 @@ rm "$FILE.tar.gz"
 rm "*.whl"
 tar zcvf "$FILE.tar.gz" $FILE
 rm -rf $FILE
+rm "*.whl"
 cd ..
 
 if [ "$1" != "--no-upload" ]; then
