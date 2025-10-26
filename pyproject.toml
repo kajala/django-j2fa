@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 [tool.setuptools]
-packages = ["jutil"]
+packages = ["j2fa"]
 include-package-data = true
 
 [project.urls]
