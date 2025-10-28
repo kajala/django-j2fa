@@ -24,8 +24,11 @@ classifiers = [
 ]
 
 [tool.setuptools]
-packages = ["j2fa"]
 include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["j2fa*"]
 
 [project.urls]
 "Homepage" = "https://github.com/kajala/django-j2fa"
